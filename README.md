@@ -1,5 +1,14 @@
 # Hadoop Note
 
+## [Scala](./scala)
+* [命令行参数解析](/scala/parsecmmandline.md)
+
 ## [Spark](./spark)
-1. [csv操作](/spark/csv.md)
-2. [hbase操作](/spark/hbase.md)
+### 读写
+* [spark读写hbase](/spark/hbase/hbase.md)
+* [spark读取小文件](/spark/readfile/combinesmallfiles.md)
+* [spark读取AWS S3单个文件](/spark/readfile/readsiginals3.md)
+
+### 问题
+* [Spark读csv多行问题](/spark/issue/csv.md)
+* [Spark Task not serializable](/spark/issue/serializable.md)
