@@ -3,6 +3,8 @@
 ## [Scala](./scala)
 * [命令行参数解析](/scala/parsecmmandline.md)
 
+## [Python](./python)
+* [编码问题处理](/python/encoding.md)
 ## [Spark](./spark)
 ### 读写
 * [spark读写hbase](/spark/hbase/hbase.md)
