@@ -19,12 +19,12 @@ JVMTIAGENT 	= $(BINDIR)/libagent.so
 # Jar Package class encrypt dynamic library
 ENCRYPTLIB	= $(BINDIR)/libencrypt.so
 
-all: _pre $(JVMTIAGENT)
+all: _pre $(JVMTIAGENT) $(ENCRYPTLIB)
 
 $(JVMTIAGENT): $(OBJDIR)/jvmtimain.o $(OBJDIR)/jvmtiagent.o
 	$(CXX) -shared  -o  $@ $^
 
-$(ENCRYPTLIB): $(OBJDIR)/encrypt.o
+$(ENCRYPTLIB): $(OBJDIR)/jarencrypt.o
 	$(CXX) -shared  -o  $@ $^
 	
 $(OBJDIR)/%.o:$(SRC)/%.cpp

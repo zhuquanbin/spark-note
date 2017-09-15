@@ -140,10 +140,8 @@ void JNICALL JvmTIAgent::HandleClassFileLoadHook(
 				index += 2; 
 			}
 			
-			if ( 0 == index  && 1 == class_data_len){	// size 1
+			if ( (0 == index  && 1 == class_data_len) ||  class_data_len-1 == index ){	// size 1 || size 2n + 1
 				*pNewClass = class_data[index] ^ 0x09;
-			}else if ( class_data_len-1 == index ){ 	// size 2n + 1
-				*pNewClass = class_data[index + 1] ^ 0x09;
 			}
 			cout << "[JVMTI Agent] Decrypt class (" << name << ") finished !" <<endl;
 		}else{
