@@ -226,7 +226,8 @@ void JNICALL JvmTIAgent::HandleClassFileLoadHook(
 }
 ```
 
-##JVM TI Example
+## JVM TI Example
+
 代码 [github](https://github.com/zhuquanbin/note/tree/master/java/jvmti)
 
 __注意__ jvm-tool-cpp 目录下的 makefile 中 **INCLUDE** 参数修改为本地的JDK头文件的所在的目录
