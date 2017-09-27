@@ -227,7 +227,7 @@ void JNICALL JvmTIAgent::HandleClassFileLoadHook(
 ```
 
 ##JVM TI Example
-代码 [github]()
+代码 [github](https://github.com/zhuquanbin/note/tree/master/java/jvmti)
 
 __注意__ jvm-tool-cpp 目录下的 makefile 中 **INCLUDE** 参数修改为本地的JDK头文件的所在的目录
 
@@ -235,16 +235,36 @@ __注意__ jvm-tool-cpp 目录下的 makefile 中 **INCLUDE** 参数修改为本
 ```bash
 cd jvmti && make
 ```
-[![](/image/build.png "编译")][build]
+![编译](./image/build.png "编译")
 
-> 对JAR进行反编译
-[![](/image/before-encrypt.png "JD-GUI 反编译效果")][before-encrypt]
-[![](/image/before-encrypt-01.png "JD-GUI 反编译效果")][before-encrypt-01]
+> 使用JD-GUI 对JAR进行反编译
 
+![](./image/before-encrypt.png "JD-GUI 反编译效果")
+![](./image/before-encrypt-01.png "JD-GUI 反编译效果")
+
+> 运行JAR包
 
 ```bash
 java -Djava.library.path=./ -cp jvm-ti.jar com.borey.JvmTITest
+```
+![](./image/s1.png "JD-GUI 反编译效果")
+
+> 对JAR包进行加密
+```bash
 java -Djava.library.path=./ -cp jvm-ti.jar  com.tool.Encrypt jvm-ti.jar 
+```
+![](./image/e1.png "加密")
+![](./image/encrypted-01.png "JD-GUI 反编译效果")
+![](./image/encrypted-02.png "JD-GUI 反编译效果")
+
+> 正常运行加密后的JAR包，ClassFormatError错误
+```bash
 java -Djava.library.path=./ -cp jvm-ti-encrypted.jar com.borey.JvmTITest
+```
+![](./image/err.png "ClassFormatError错误")
+
+> 运行带Agent加密后的JAR包
+```bash
 java -Djava.library.path=./ -agentpath:./libagent.so=show -cp jvm-ti-encrypted.jar com.borey.JvmTITest
 ```
+![](./image/success.png "")
