@@ -9,12 +9,12 @@ using namespace std;
 jvmtiEnv* JvmTIAgent::m_jvmti = 0;
 char* JvmTIAgent::m_options = 0;
 
-// ÏîÄ¿°üÃûÇ°×º
+// é¡¹ç›®åŒ…åå‰ç¼€
 const char * g_SelfJavaPackageName = "com/borey";
 
 JvmTIAgent::~JvmTIAgent() throw(AgentException)
 {
-    // ±ØĞëÊÍ·ÅÄÚ´æ£¬·ÀÖ¹ÄÚ´æĞ¹Â¶
+    // å¿…é¡»é‡Šæ”¾å†…å­˜ï¼Œé˜²æ­¢å†…å­˜æ³„éœ²
     m_jvmti->Deallocate(reinterpret_cast<unsigned char*>(m_options));
 }
 
@@ -35,47 +35,50 @@ void JvmTIAgent::ParseOptions(const char* str) const throw(AgentException)
 	if (len == 0) 
 		return;
 
-  	// ±ØĞë×öºÃÄÚ´æ¸´ÖÆ¹¤×÷
+  	// å¿…é¡»åšå¥½å†…å­˜å¤åˆ¶å·¥ä½œ
 	jvmtiError error;
     error = m_jvmti->Allocate(len + 1,reinterpret_cast<unsigned char**>(&m_options));
 	CheckException(error);
     strcpy(m_options, str);
 
-    // ¿ÉÒÔÔÚÕâÀï½øĞĞ²ÎÊı½âÎöµÄ¹¤×÷
+    // å¯ä»¥åœ¨è¿™é‡Œè¿›è¡Œå‚æ•°è§£æçš„å·¥ä½œ
 	// ...
 	cout << "[JVMTI Agent] Application Options: " << m_options <<endl;
 }
 
 void JvmTIAgent::AddCapability() const throw(AgentException)
 {
-    // ´´½¨Ò»¸öĞÂµÄ»·¾³
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„ç¯å¢ƒ
     jvmtiCapabilities caps;
     memset(&caps, 0, sizeof(caps));
-	// ¿ÉÒÔÉú³É ·½·¨½øÈëÊÂ¼ş
-    caps.can_generate_method_entry_events = 1;
-	// ¿ÉÒÔ¶ÔÃ¿¸ö¼ÓÔØÒªÀàÉú³É ClassFileLoadHook ÊÂ¼ş
+	// å¯ä»¥ç”Ÿæˆ æ–¹æ³•è¿›å…¥äº‹ä»¶
+    //caps.can_generate_method_entry_events = 1;
+	// å¯ä»¥å¯¹æ¯ä¸ªåŠ è½½è¦ç±»ç”Ÿæˆ ClassFileLoadHook äº‹ä»¶
     caps.can_generate_all_class_hook_events = 1;
 	
-    // ÉèÖÃµ±Ç°»·¾³
+    // è®¾ç½®å½“å‰ç¯å¢ƒ
     jvmtiError error = m_jvmti->AddCapabilities(&caps);
 	CheckException(error);
 }
   
 void JvmTIAgent::RegisterEvent() const throw(AgentException)
 {
-    // ´´½¨Ò»¸öĞÂµÄ»Øµ÷º¯Êı
+    // åˆ›å»ºä¸€ä¸ªæ–°çš„å›è°ƒå‡½æ•°
     jvmtiEventCallbacks callbacks;
     memset(&callbacks, 0, sizeof(callbacks));
-	// ÉèÖÃ·½·¨½øÈëº¯ÊıÖ¸Õë
-    callbacks.MethodEntry = &JvmTIAgent::HandleMethodEntry;
+	// è®¾ç½®æ–¹æ³•è¿›å…¥å‡½æ•°æŒ‡é’ˆ
+    //callbacks.MethodEntry = &JvmTIAgent::HandleMethodEntry;
+	// è®¾ç½®ç±»åŠ è½½æ–¹æ³•å‡½æ•°æŒ‡é’ˆ
+	callbacks.ClassFileLoadHook = &JvmTIAgent::HandleClassFileLoadHook;
     
-    // ÉèÖÃ»Øµ÷º¯Êı
+    // è®¾ç½®å›è°ƒå‡½æ•°
     jvmtiError error;
     error = m_jvmti->SetEventCallbacks(&callbacks, static_cast<jint>(sizeof(callbacks)));
 	CheckException(error);
 
-	// ¿ªÆôÊÂ¼ş¼àÌı
+	// å¼€å¯äº‹ä»¶ç›‘å¬
 	error = m_jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_METHOD_ENTRY, 0);
+	error = m_jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, 0);
 	CheckException(error);
 }
 
@@ -87,19 +90,19 @@ void JNICALL JvmTIAgent::HandleMethodEntry(jvmtiEnv* jvmti, JNIEnv* jni, jthread
         char* name;
 		char* signature;
         
-		// »ñµÃ·½·¨¶ÔÓ¦µÄÀà
+		// è·å¾—æ–¹æ³•å¯¹åº”çš„ç±»
         error = m_jvmti->GetMethodDeclaringClass(method, &clazz);
         CheckException(error);
-        // »ñµÃÀàµÄÇ©Ãû
+        // è·å¾—ç±»çš„ç­¾å
         error = m_jvmti->GetClassSignature(clazz, &signature, 0);
         CheckException(error);
-        // »ñµÃ·½·¨Ãû×Ö
+        // è·å¾—æ–¹æ³•åå­—
         error = m_jvmti->GetMethodName(method, &name, NULL, NULL);
         CheckException(error);
         
 		cout << "[JVMTI Agent] Enter method" << signature << " -> " << name << "(..)"<< endl;
 
-        // ±ØĞëÊÍ·ÅÄÚ´æ£¬±ÜÃâÄÚ´æĞ¹Â¶
+        // å¿…é¡»é‡Šæ”¾å†…å­˜ï¼Œé¿å…å†…å­˜æ³„éœ²
         error = m_jvmti->Deallocate(reinterpret_cast<unsigned char*>(name));
 		CheckException(error);
         error = m_jvmti->Deallocate(reinterpret_cast<unsigned char*>(signature));
@@ -123,16 +126,16 @@ void JNICALL JvmTIAgent::HandleClassFileLoadHook(
 	unsigned char** new_class_data)
 {
 	try{
-		// class ÎÄ¼ş³¤¶È¸³Öµ
+		// class æ–‡ä»¶é•¿åº¦èµ‹å€¼
 		*new_class_data_len = class_data_len;
 		jvmtiError error;
-		// ÉêÇë ĞÂµÄclass ×Ö·û¿Õ¼ä
+		// ç”³è¯· æ–°çš„class å­—ç¬¦ç©ºé—´
 		error = m_jvmti->Allocate(class_data_len, new_class_data);
 		CheckException(error);
 		unsigned char *pNewClass = *new_class_data;
 		unsigned int selfPackageLen = strlen(g_SelfJavaPackageName);
-		if (strlen(name) > selfPackageLen && strncmp(name, g_SelfJavaPackageName, selfPackageLen)){
-			// ½øĞĞ class ½âÃÜ £º¹æÔò£¨ÆæÊıÒì»ò 0x07, Å¼Êı Òì»ò 0x08, ²¢»»Î»£¬ ×îºóÒ»Î»ÆæÊıÒì»ò0x09£©
+		if (strlen(name) > selfPackageLen && 0 == strncmp(name, g_SelfJavaPackageName, selfPackageLen)){
+			// è¿›è¡Œ class è§£å¯† ï¼šè§„åˆ™ï¼ˆå¥‡æ•°å¼‚æˆ– 0x07, å¶æ•° å¼‚æˆ– 0x08, å¹¶æ¢ä½ï¼Œ æœ€åä¸€ä½å¥‡æ•°å¼‚æˆ–0x09ï¼‰
 			int index = 0;
 			for(; index < class_data_len-1 ; ){
 				*pNewClass++ = class_data[index+1] ^ 0x08;

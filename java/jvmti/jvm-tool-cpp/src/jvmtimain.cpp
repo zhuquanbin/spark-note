@@ -6,6 +6,7 @@
 using namespace std;
 
 // 《JVM Tool Interface 1.2》 https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html
+// 《IBM JVMTI 和 Agent实现》 https://www.ibm.com/developerworks/cn/java/j-lo-jpda2/index.html
 
 /*
 Agent 的工作过程:
@@ -29,7 +30,7 @@ Agent 入口函数
 */
 JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved)
 {
-    cout << "Agent_OnLoad(" << vm << ")" << endl;
+    cout << "[JVMTI Agent] Agent_OnLoad(" << vm << ")" << endl;
     try{
 		JvmTIAgent* agent = new JvmTIAgent();
 		agent->Init(vm);
@@ -38,7 +39,7 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *vm, char *options, void *reserved)
         agent->RegisterEvent();
         
     } catch (AgentException& e) {
-        cout << "Error when enter HandleMethodEntry: " << e.what() << " [" << e.ErrCode() << "]";
+        cout << "[JVMTI Agent] Error, " << e.what() << " [" << e.ErrCode() << "]"<<endl;
 		return JNI_ERR;
 	}
     
@@ -50,5 +51,5 @@ Agent 任务完成，卸载
 */
 JNIEXPORT void JNICALL Agent_OnUnload(JavaVM *vm)
 {
-    cout << "Agent_OnUnload(" << vm << ")" << endl;
+    cout << "[JVMTI Agent] Agent_OnUnload(" << vm << ")" << endl;
 }

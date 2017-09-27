@@ -9,7 +9,7 @@ CFLAGS	= -g -Wall -fPIC $(INCLUDE)
 SRC  	= src
 BUILD	= build
 OBJDIR	= $(BUILD)/obj
-BINDIR  = $(BUILD)/bin
+BINDIR  = ../bin
 
 #source 	= $(wildcard *.cpp)  
 #objs	= $(source:%.cpp=$(OBJDIR)/%.o)

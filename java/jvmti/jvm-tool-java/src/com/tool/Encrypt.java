@@ -10,12 +10,12 @@ import java.util.jar.JarOutputStream;
  * Created by Borey.Zhu on 2017/9/8.
  */
 public class Encrypt {
-//
-//    native byte[] encrypt(byte[] _buf);
-//
-//    static {
-//        System.loadLibrary("encrypt");
-//    }
+
+    native byte[] encrypt(byte[] _buf);
+
+    static {
+        System.loadLibrary("encrypt");
+    }
 
     // 需要加密类包的前缀
     private static String encryptClassPrefix = "com/borey/";
@@ -24,7 +24,7 @@ public class Encrypt {
 
         int argc = args.length;
         if (0 == argc){
-            System.out.println("usage:\n\t java com.tool.Encrypt  [*.jar]");
+            System.out.println("usage:\n\t java -Djava.library.path=./ -cp jvm-ti.jar  com.tool.Encrypt  [*.jar]");
             System.exit(0);
         }
         for (String package_name : args) {
@@ -49,7 +49,7 @@ public class Encrypt {
             Encrypt encrypt = new Encrypt();
 
             // 生成新的 加密jar包
-            jarEncrypt_path = jarSrcName.substring(0, jarSrcName.length() - 4) + "_encrypt.jar";
+            jarEncrypt_path = jarSrcName.substring(0, jarSrcName.length() - 4) + "-encrypted.jar";
             JarOutputStream encryptJar = new JarOutputStream(new FileOutputStream(jarEncrypt_path));
 
 
@@ -70,9 +70,12 @@ public class Encrypt {
                 String className = entry.getName();
                 byte[] classBytes = output.toByteArray();
 
-                System.out.println(String.format("Doing [package]:%s, [class]:%s ", jarSrcName, className));
+
                 if (className.endsWith(".class") && className.startsWith(encryptClassPrefix)){
-//                    classBytes = encrypt.encrypt(classBytes);
+                    classBytes = encrypt.encrypt(classBytes);
+                    System.out.println(String.format("Encrypted [package]:%s, [class]:%s ", jarSrcName, className));
+                }else{
+                    System.out.println(String.format("Appended  [package]:%s, [class]:%s ", jarSrcName, className));
                 }
 
                 // 将处理完后的class 写入新的 Jar 包中

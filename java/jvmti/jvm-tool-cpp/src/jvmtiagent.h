@@ -8,7 +8,13 @@ class AgentException
 	}
 
 	const char* what() const throw() { 
-		return "AgentException"; 
+		switch(m_error){
+			case 99:	
+				return "The capability being used is false in this environment."; 
+			default: 
+				return "é”™è¯¯ç ï¼š https://docs.oracle.com/javase/7/docs/platform/jvmti/jvmti.html#ErrorSection"; 
+		}
+		
 	}
 
 	jvmtiError ErrCode() const throw() {
@@ -53,7 +59,7 @@ class JvmTIAgent
  private:
 	static void CheckException(jvmtiError error) throw(AgentException)
 	{
-		// ¿ÉÒÔ¸ù¾İ´íÎóÀàĞÍÀ©Õ¹¶ÔÓ¦µÄÒì³££¬ÕâÀïÖ»×ö¼òµ¥´¦Àí
+		// å¯ä»¥æ ¹æ®é”™è¯¯ç±»å‹æ‰©å±•å¯¹åº”çš„å¼‚å¸¸ï¼Œè¿™é‡Œåªåšç®€å•å¤„ç†
 		if (error != JVMTI_ERROR_NONE) {
 			throw AgentException(error);
 		}

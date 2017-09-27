@@ -7,7 +7,7 @@ using namespace std;
 
 //https://www3.ntu.edu.sg/home/ehchua/programming/java/JavaNativeInterface.html
 
-extern "C" JNIEXPORT jbyteArray JNICALL Java_Encrypt_encrypt(
+extern "C" JNIEXPORT jbyteArray JNICALL Java_com_tool_Encrypt_encrypt(
 	JNIEnv * jni_env, 
 	jobject  arg, 
 	jbyteArray _buf){
