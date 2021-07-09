@@ -12,8 +12,6 @@ Exception in thread "main" org.apache.spark.SparkException: Task not serializabl
         at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
         at org.apache.spark.rdd.RDD.withScope(RDD.scala:362)
         at org.apache.spark.rdd.RDD.filter(RDD.scala:386)
-        at com.wiwide.sniffer.SnifferAnalyse$.main(SnifferAnalyse.scala:130)
-        at com.wiwide.sniffer.SnifferAnalyse.main(SnifferAnalyse.scala)
         at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
         at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
         at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
